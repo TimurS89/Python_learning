@@ -1,44 +1,41 @@
 # Python_learning
 
-## Premium FFmpeg Thin-Wave Visualizer
+## Premium Wire Visualizer (3 Distinct Variants)
 
-`wave_visualizer.py` now ships with **3 significantly different visual directions**:
+Per your request, this version focuses only on enhanced wire-style aesthetics inspired by top sound-wave visuals.
 
-1. **Wire Ribbon Infinity** (`wire_ribbon`)  
-   Deep blue flowing ribbons with dense dotted wire mesh and cinematic glow.
-2. **Prism Spectrum Pulse** (`prism_spectrum`)  
-   Radial neon spectrum burst with orbit rings and pulse spokes.
-3. **Lattice Dream Waves** (`lattice_dream`)  
-   Folded lattice curtains + crossing wave sheets in an elegant abstract look.
+### Variants
 
-These were redesigned to be much richer and more publication-ready for YouTube/social platforms.
+1. **Wire Ribbon Flux** (`wire_flux`)  
+   Dense wave sheets + strong hero ribbon curves + luminous point mesh.
+2. **Wire Ribbon Helix** (`wire_helix`)  
+   Twisted dual-helix wire structure with crossing links and canopy waves.
+3. **Wire Ribbon Silk** (`wire_silk`)  
+   Elegant layered silk-like wave curtains with refined glow lines.
 
 ## Requirements
 
 - Python 3.9+
-- FFmpeg available in `PATH` for final MP4 rendering
+- FFmpeg in `PATH` for MP4 rendering
 
-## Generate previews (no video render)
+## Generate review previews
 
 ```bash
 python wave_visualizer.py --render-previews --width 1280 --height 720 --preview-dir previews
 ```
 
-This creates 2 preview SVG images for each style (6 total).
+This generates exactly 3 previews (one for each variant) for quick review.
 
 ## Render video
 
 ```bash
-python wave_visualizer.py --style wire_ribbon --audio your_song.mp3 --output output/wire_ribbon.mp4 --width 1920 --height 1080 --fps 30
+python wave_visualizer.py --style wire_flux --audio your_song.mp3 --output output/wire_flux.mp4 --width 1920 --height 1080 --fps 30
 ```
 
-Switch style via `--style prism_spectrum` or `--style lattice_dream`.
+Use `--style wire_helix` or `--style wire_silk` for the other variants.
 
-## Generated preview files
+## Preview files
 
-- `previews/wire_ribbon_preview_1.svg`
-- `previews/wire_ribbon_preview_2.svg`
-- `previews/prism_spectrum_preview_1.svg`
-- `previews/prism_spectrum_preview_2.svg`
-- `previews/lattice_dream_preview_1.svg`
-- `previews/lattice_dream_preview_2.svg`
+- `previews/wire_flux_preview_1.svg`
+- `previews/wire_helix_preview_1.svg`
+- `previews/wire_silk_preview_1.svg`
