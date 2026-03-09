@@ -1,41 +1,37 @@
 # Python_learning
 
-## Premium Wire Visualizer (3 Distinct Variants)
+## Cinematic Wire-Wave Visualizer
 
-Per your request, this version focuses only on enhanced wire-style aesthetics inspired by top sound-wave visuals.
+This version heavily upgrades the visual language to match premium flowing sound-wave artwork (translucent ribbons + spark particles + glowing layers), with 3 distinct variants:
 
-### Variants
-
-1. **Wire Ribbon Flux** (`wire_flux`)  
-   Dense wave sheets + strong hero ribbon curves + luminous point mesh.
-2. **Wire Ribbon Helix** (`wire_helix`)  
-   Twisted dual-helix wire structure with crossing links and canopy waves.
-3. **Wire Ribbon Silk** (`wire_silk`)  
-   Elegant layered silk-like wave curtains with refined glow lines.
+1. **Wire Flux Aurora** (`wire_flux`)  
+   Bright arcing ribbon canopy with strong central woven mesh and spark trails.
+2. **Wire Helix Photon** (`wire_helix`)  
+   More twisted and energetic ribbon flow with tighter wave crossing behavior.
+3. **Wire Silk Dream** (`wire_silk`)  
+   Softer satin-like layered ribbons with elegant bright highlights.
 
 ## Requirements
 
 - Python 3.9+
 - FFmpeg in `PATH` for MP4 rendering
 
-## Generate review previews
+## Generate preview images for review
 
 ```bash
 python wave_visualizer.py --render-previews --width 1280 --height 720 --preview-dir previews
 ```
 
-This generates exactly 3 previews (one for each variant) for quick review.
+This outputs 3 SVG previews (1 per variant):
 
-## Render video
+- `previews/wire_flux_preview_1.svg`
+- `previews/wire_helix_preview_1.svg`
+- `previews/wire_silk_preview_1.svg`
+
+## Render a video
 
 ```bash
 python wave_visualizer.py --style wire_flux --audio your_song.mp3 --output output/wire_flux.mp4 --width 1920 --height 1080 --fps 30
 ```
 
-Use `--style wire_helix` or `--style wire_silk` for the other variants.
-
-## Preview files
-
-- `previews/wire_flux_preview_1.svg`
-- `previews/wire_helix_preview_1.svg`
-- `previews/wire_silk_preview_1.svg`
+Switch with `--style wire_helix` or `--style wire_silk`.
