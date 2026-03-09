@@ -1,43 +1,42 @@
 # Python_learning
 
-## FFmpeg Thin-Wave Visualizer
+## Reference-Inspired FFmpeg Wave Visualizer
 
-I added `wave_visualizer.py`, a script that creates high-quality thin-wave music visualizers in three styles:
+`wave_visualizer.py` now provides **three clearly different visualizer styles** inspired by your attached references:
 
-1. **Vivid Wave Of Colors Wave Sound Effect** (`vivid`)
-2. **Animated Wave Wave Music Wave Wave And Sound Background** (`animated`)
-3. **Abstract Sound Equalizer Background Shining Music Wave Design Equalizer** (`equalizer`)
+1. **Aurora Mist Wave** (`aurora_mist`)  
+   Layered translucent aqua wave fog + floating particles.
+2. **Neon Pulse Spectrum** (`neon_pulse`)  
+   Cyan/magenta center glow, beam core, and pulse/equalizer accents.
+3. **Wire Ribbon Wave** (`wire_ribbon`)  
+   Bright blue ribbon waves with dotted wireframe texture.
 
-### What it does
-
-- Uses **FFmpeg** to render audio visualizer videos.
-- Uses Python `math`-based wave construction for style geometry.
-- Generates **preview images** (SVG) so you can choose a style before rendering.
-
-### Requirements
+## Requirements
 
 - Python 3.9+
-- FFmpeg installed and available in `PATH`
+- FFmpeg available in `PATH` (for final MP4 rendering)
 
-### Generate style previews (no video render)
+## Generate style previews only
 
 ```bash
 python wave_visualizer.py --render-previews --width 1280 --height 720 --preview-dir previews
 ```
 
-### Render a visualizer video
+This creates 2 previews for each of the 3 styles.
+
+## Render final video
 
 ```bash
-python wave_visualizer.py --style vivid --audio your_song.mp3 --output output/vivid_visualizer.mp4 --width 1920 --height 1080 --fps 30
+python wave_visualizer.py --style aurora_mist --audio your_song.mp3 --output output/aurora_mist.mp4 --width 1920 --height 1080 --fps 30
 ```
 
-You can switch styles with `--style animated` or `--style equalizer`.
+Use `--style neon_pulse` or `--style wire_ribbon` for the other looks.
 
-### Preview files created
+## Preview files
 
-- `previews/vivid_preview_1.svg`
-- `previews/vivid_preview_2.svg`
-- `previews/animated_preview_1.svg`
-- `previews/animated_preview_2.svg`
-- `previews/equalizer_preview_1.svg`
-- `previews/equalizer_preview_2.svg`
+- `previews/aurora_mist_preview_1.svg`
+- `previews/aurora_mist_preview_2.svg`
+- `previews/neon_pulse_preview_1.svg`
+- `previews/neon_pulse_preview_2.svg`
+- `previews/wire_ribbon_preview_1.svg`
+- `previews/wire_ribbon_preview_2.svg`
