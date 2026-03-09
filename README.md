@@ -1,42 +1,44 @@
 # Python_learning
 
-## Reference-Inspired FFmpeg Wave Visualizer
+## Premium FFmpeg Thin-Wave Visualizer
 
-`wave_visualizer.py` now provides **three clearly different visualizer styles** inspired by your attached references:
+`wave_visualizer.py` now ships with **3 significantly different visual directions**:
 
-1. **Aurora Mist Wave** (`aurora_mist`)  
-   Layered translucent aqua wave fog + floating particles.
-2. **Neon Pulse Spectrum** (`neon_pulse`)  
-   Cyan/magenta center glow, beam core, and pulse/equalizer accents.
-3. **Wire Ribbon Wave** (`wire_ribbon`)  
-   Bright blue ribbon waves with dotted wireframe texture.
+1. **Wire Ribbon Infinity** (`wire_ribbon`)  
+   Deep blue flowing ribbons with dense dotted wire mesh and cinematic glow.
+2. **Prism Spectrum Pulse** (`prism_spectrum`)  
+   Radial neon spectrum burst with orbit rings and pulse spokes.
+3. **Lattice Dream Waves** (`lattice_dream`)  
+   Folded lattice curtains + crossing wave sheets in an elegant abstract look.
+
+These were redesigned to be much richer and more publication-ready for YouTube/social platforms.
 
 ## Requirements
 
 - Python 3.9+
-- FFmpeg available in `PATH` (for final MP4 rendering)
+- FFmpeg available in `PATH` for final MP4 rendering
 
-## Generate style previews only
+## Generate previews (no video render)
 
 ```bash
 python wave_visualizer.py --render-previews --width 1280 --height 720 --preview-dir previews
 ```
 
-This creates 2 previews for each of the 3 styles.
+This creates 2 preview SVG images for each style (6 total).
 
-## Render final video
+## Render video
 
 ```bash
-python wave_visualizer.py --style aurora_mist --audio your_song.mp3 --output output/aurora_mist.mp4 --width 1920 --height 1080 --fps 30
+python wave_visualizer.py --style wire_ribbon --audio your_song.mp3 --output output/wire_ribbon.mp4 --width 1920 --height 1080 --fps 30
 ```
 
-Use `--style neon_pulse` or `--style wire_ribbon` for the other looks.
+Switch style via `--style prism_spectrum` or `--style lattice_dream`.
 
-## Preview files
+## Generated preview files
 
-- `previews/aurora_mist_preview_1.svg`
-- `previews/aurora_mist_preview_2.svg`
-- `previews/neon_pulse_preview_1.svg`
-- `previews/neon_pulse_preview_2.svg`
 - `previews/wire_ribbon_preview_1.svg`
 - `previews/wire_ribbon_preview_2.svg`
+- `previews/prism_spectrum_preview_1.svg`
+- `previews/prism_spectrum_preview_2.svg`
+- `previews/lattice_dream_preview_1.svg`
+- `previews/lattice_dream_preview_2.svg`

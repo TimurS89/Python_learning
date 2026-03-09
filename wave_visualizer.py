@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
-"""Create cinematic audio visualizers inspired by three reference wave looks.
+"""Premium audio visualizer generator with 3 highly distinct art directions.
 
-Styles:
-1) aurora_mist  - layered translucent aqua wave fog + particles.
-2) neon_pulse   - centered cyan/magenta glow band with pulse/equalizer accents.
-3) wire_ribbon  - luminous blue ribbon waves with dotted wireframe guides.
-
-The script can:
-- Generate static SVG previews (2 per style) so you can pick a look quickly.
-- Render MP4 with FFmpeg `showwaves` composition for each style.
+Focus: thin-wave / elegant line aesthetics with richer composition than the previous version.
+- Generates 2 SVG previews per style for quick visual selection.
+- Renders MP4 via FFmpeg with style-specific `showwaves` pipelines.
 """
 
 from __future__ import annotations
@@ -29,185 +24,203 @@ class Style:
     title: str
     bg_top: str
     bg_bottom: str
-    colors: tuple[str, ...]
+    palette: tuple[str, ...]
     mode: str
 
 
 STYLES: dict[str, Style] = {
-    "aurora_mist": Style(
-        key="aurora_mist",
-        title="Aurora Mist Wave",
-        bg_top="#020612",
-        bg_bottom="#000000",
-        colors=("#95fff5", "#66f2ea", "#d7fff8", "#49ced6"),
-        mode="mist",
-    ),
-    "neon_pulse": Style(
-        key="neon_pulse",
-        title="Neon Pulse Spectrum",
-        bg_top="#060019",
-        bg_bottom="#000008",
-        colors=("#2ab7ff", "#00e9ff", "#ff4ca0", "#ff6cab"),
-        mode="pulse",
-    ),
     "wire_ribbon": Style(
         key="wire_ribbon",
-        title="Wire Ribbon Wave",
-        bg_top="#03143a",
-        bg_bottom="#000713",
-        colors=("#1ac8ff", "#47deff", "#84ebff", "#0ca0ff"),
-        mode="wire",
+        title="Wire Ribbon Infinity",
+        bg_top="#021636",
+        bg_bottom="#010612",
+        palette=("#1DD3FF", "#64ECFF", "#A0F8FF", "#2C8DFF"),
+        mode="mesh_ribbon",
+    ),
+    "prism_spectrum": Style(
+        key="prism_spectrum",
+        title="Prism Spectrum Pulse",
+        bg_top="#0B0426",
+        bg_bottom="#02010A",
+        palette=("#2EE6FF", "#8A7DFF", "#FF4AB8", "#FF8E42"),
+        mode="radial_prism",
+    ),
+    "lattice_dream": Style(
+        key="lattice_dream",
+        title="Lattice Dream Waves",
+        bg_top="#041A1E",
+        bg_bottom="#010506",
+        palette=("#57FFD3", "#7EF9FF", "#FFD56A", "#C7FFF2"),
+        mode="lattice_fold",
     ),
 }
 
 
-def _path_from_points(points: list[tuple[float, float]]) -> str:
-    return " ".join([("M" if i == 0 else "L") + f"{x:.2f},{y:.2f}" for i, (x, y) in enumerate(points)])
+def _path(points: list[tuple[float, float]]) -> str:
+    return " ".join(("M" if i == 0 else "L") + f"{x:.2f},{y:.2f}" for i, (x, y) in enumerate(points))
 
 
-def _wave_points(width: int, height: int, phase: float, f1: float, f2: float, amp: float) -> list[tuple[float, float]]:
-    pts = []
-    for i in range(460):
-        xn = i / 459
+def _wave(width: int, height: int, phase: float, amp: float, f1: float, f2: float) -> list[tuple[float, float]]:
+    pts: list[tuple[float, float]] = []
+    for i in range(560):
+        xn = i / 559
         x = xn * width
-        y = (
-            0.52
-            + amp * math.sin(xn * math.pi * 2.4 * f1 + phase)
-            + (amp * 0.45) * math.sin(xn * math.pi * 8.0 * f2 + phase * 1.9)
-        )
+        y = 0.53 + amp * math.sin(xn * math.pi * 2.5 * f1 + phase)
+        y += amp * 0.43 * math.sin(xn * math.pi * 7.0 * f2 - phase * 1.4)
         pts.append((x, y * height))
     return pts
 
 
-def _mist_svg(style: Style, width: int, height: int, phase: float, rng: random.Random) -> str:
-    layers = []
-    for i in range(10):
-        pts = _wave_points(width, height, phase + i * 0.28, 0.75 + i * 0.05, 0.85 + i * 0.03, amp=0.09 + i * 0.004)
-        path = _path_from_points(pts)
-        color = style.colors[i % len(style.colors)]
-        dy = (i - 5) * 8
-        layers.append(
-            f'<path d="{path}" transform="translate(0,{dy})" stroke="{color}" stroke-width="{16 - i}" opacity="{0.04 + i*0.015:.3f}" fill="none"/>'
-        )
-        layers.append(
-            f'<path d="{path}" transform="translate(0,{dy})" stroke="{color}" stroke-width="1.2" opacity="0.34" fill="none"/>'
-        )
+def _mesh_ribbon_svg(style: Style, w: int, h: int, phase: float, rng: random.Random) -> str:
+    layers: list[str] = []
 
-    particles = []
-    for _ in range(420):
-        x = rng.uniform(0, width)
-        y = rng.uniform(height * 0.18, height * 0.9)
-        r = rng.uniform(0.4, 2.1)
-        op = rng.uniform(0.05, 0.35)
-        c = style.colors[rng.randrange(0, len(style.colors))]
-        particles.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{r:.2f}" fill="{c}" opacity="{op:.3f}"/>')
+    # Deep wire sheets
+    for sheet in range(30):
+        pts = _wave(w, h, phase + sheet * 0.10, amp=0.040 + 0.002 * sheet, f1=0.9, f2=0.92 + 0.02 * sheet)
+        d = _path(pts)
+        yoff = (sheet - 15) * 5.1
+        c = style.palette[sheet % len(style.palette)]
+        layers.append(f'<path d="{d}" transform="translate(0,{yoff:.2f})" stroke="{c}" stroke-width="0.8" opacity="0.24" fill="none"/>')
 
-    return "".join(layers + particles)
+    # Hero ribbons
+    for k in range(4):
+        pts = _wave(w, h, phase + k * 0.62, amp=0.102, f1=0.86 + k * 0.06, f2=1.0 + k * 0.12)
+        d = _path(pts)
+        c = style.palette[k % len(style.palette)]
+        layers.append(f'<path d="{d}" stroke="{c}" stroke-width="16" opacity="0.11" fill="none"/>')
+        layers.append(f'<path d="{d}" stroke="{c}" stroke-width="3.3" opacity="0.95" fill="none"/>')
+
+    # Dotted links between sheets
+    for ix in range(280):
+        xn = ix / 279
+        x = xn * w
+        base = h * (0.53 + 0.15 * math.sin(xn * math.pi * 4.8 + phase))
+        for k in range(10):
+            y = base + (k - 5) * 10.5 + 3.5 * math.sin(xn * 30 + phase + k)
+            op = 0.07 + 0.03 * k
+            layers.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="1.0" fill="{style.palette[2]}" opacity="{op:.3f}"/>')
+
+    for _ in range(220):
+        x = rng.uniform(0, w)
+        y = rng.uniform(0, h)
+        layers.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.9" fill="#c9f6ff" opacity="0.16"/>')
+
+    return "".join(layers)
 
 
-def _pulse_svg(style: Style, width: int, height: int, phase: float, rng: random.Random) -> str:
-    center_y = height * 0.5
-    elems = []
-    # Core flare
-    for i in range(28):
-        r = (i + 1) * 22
-        op = max(0.0, 0.23 - i * 0.007)
-        c = style.colors[i % len(style.colors)]
-        elems.append(f'<circle cx="{width/2:.2f}" cy="{center_y:.2f}" r="{r:.2f}" fill="{c}" opacity="{op:.3f}"/>')
+def _radial_prism_svg(style: Style, w: int, h: int, phase: float, rng: random.Random) -> str:
+    cx, cy = w / 2, h / 2
+    elems: list[str] = []
 
-    # Horizontal beam
-    elems.append(
-        f'<rect x="0" y="{center_y - 3:.2f}" width="{width}" height="6" fill="{style.colors[1]}" opacity="0.55"/>'
-    )
-    elems.append(
-        f'<rect x="0" y="{center_y - 1:.2f}" width="{width}" height="2" fill="#ffffff" opacity="0.35"/>'
-    )
+    # Color bloom core.
+    for i in range(50):
+        r = 14 + i * 15
+        op = max(0.0, 0.19 - i * 0.0032)
+        color = style.palette[i % len(style.palette)]
+        elems.append(f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="{r:.2f}" fill="{color}" opacity="{op:.3f}"/>')
 
-    # Equalizer spikes around center.
-    bars = 160
-    for i in range(bars):
-        xn = i / (bars - 1)
-        x = xn * width
-        dist = abs(xn - 0.5)
-        env = max(0.04, (1.0 - dist * 2.0) ** 2)
-        h = (8 + 120 * env * abs(math.sin(i * 0.31 + phase * 4.0)))
-        color = style.colors[(i // 6) % len(style.colors)]
-        op = 0.12 + env * 0.45
-        elems.append(f'<line x1="{x:.2f}" x2="{x:.2f}" y1="{center_y-h:.2f}" y2="{center_y+h:.2f}" stroke="{color}" stroke-width="1.1" opacity="{op:.3f}"/>')
+    # Radial spokes with modulation.
+    for i in range(280):
+        angle = (i / 280) * math.tau
+        amp = 0.35 + 0.65 * abs(math.sin(i * 0.17 + phase * 2.4))
+        r1 = 45
+        r2 = 130 + 290 * amp
+        x1 = cx + r1 * math.cos(angle)
+        y1 = cy + r1 * math.sin(angle)
+        x2 = cx + r2 * math.cos(angle)
+        y2 = cy + r2 * math.sin(angle)
+        c = style.palette[(i // 18) % len(style.palette)]
+        op = 0.12 + 0.36 * amp
+        elems.append(f'<line x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" stroke="{c}" stroke-width="1.1" opacity="{op:.3f}"/>')
 
-    # Floating dust
-    for _ in range(360):
-        x = rng.uniform(0, width)
-        y = rng.uniform(0, height)
-        c = style.colors[rng.randrange(0, len(style.colors))]
-        r = rng.uniform(0.5, 1.8)
-        op = rng.uniform(0.06, 0.4)
+    # Orbiting curve rings.
+    for ring in range(5):
+        pts = []
+        for i in range(260):
+            a = (i / 259) * math.tau
+            r = 160 + ring * 54 + 18 * math.sin(a * (4 + ring) + phase * 2.0)
+            x = cx + r * math.cos(a)
+            y = cy + 0.65 * r * math.sin(a)
+            pts.append((x, y))
+        c = style.palette[ring % len(style.palette)]
+        d = _path(pts)
+        elems.append(f'<path d="{d}" stroke="{c}" stroke-width="8" opacity="0.06" fill="none"/>')
+        elems.append(f'<path d="{d}" stroke="{c}" stroke-width="1.2" opacity="0.45" fill="none"/>')
+
+    for _ in range(350):
+        x = rng.uniform(0, w)
+        y = rng.uniform(0, h)
+        r = rng.uniform(0.5, 2.3)
+        c = style.palette[rng.randrange(0, len(style.palette))]
+        op = rng.uniform(0.06, 0.35)
         elems.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{r:.2f}" fill="{c}" opacity="{op:.3f}"/>')
-    return "".join(elems)
-
-
-def _wire_svg(style: Style, width: int, height: int, phase: float, rng: random.Random) -> str:
-    elems = []
-    # Multiple ribbon lines
-    for layer in range(22):
-        pts = _wave_points(width, height, phase + layer * 0.12, 0.75, 0.95 + layer * 0.03, amp=0.05 + layer * 0.0025)
-        path = _path_from_points(pts)
-        yoff = (layer - 11) * 5.5
-        color = style.colors[layer % len(style.colors)]
-        elems.append(f'<path d="{path}" transform="translate(0,{yoff:.2f})" stroke="{color}" stroke-width="0.9" fill="none" opacity="0.26"/>')
-
-    # Main bright ribbons
-    for k in range(3):
-        pts = _wave_points(width, height, phase + k * 0.7, 0.8 + 0.1 * k, 1.0 + 0.3 * k, amp=0.10)
-        path = _path_from_points(pts)
-        c = style.colors[k]
-        elems.append(f'<path d="{path}" stroke="{c}" stroke-width="11" fill="none" opacity="0.12"/>')
-        elems.append(f'<path d="{path}" stroke="{c}" stroke-width="3.2" fill="none" opacity="0.85"/>')
-
-    # Dotted mesh look
-    for i in range(220):
-        xn = i / 219
-        x = xn * width
-        y = height * (0.53 + 0.15 * math.sin(xn * math.pi * 4 + phase))
-        for j in range(6):
-            yy = y + (j - 3) * 16 + math.sin(xn * 25 + j + phase) * 4
-            op = 0.10 + (0.02 * j)
-            elems.append(f'<circle cx="{x:.2f}" cy="{yy:.2f}" r="1.1" fill="{style.colors[2]}" opacity="{op:.3f}"/>')
-
-    # subtle stars
-    for _ in range(120):
-        x = rng.uniform(0, width)
-        y = rng.uniform(0, height)
-        elems.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="0.8" fill="#b5dfff" opacity="0.15"/>')
 
     return "".join(elems)
 
 
-def write_preview(style: Style, width: int, height: int, phase: float, out_file: Path, seed: int) -> None:
+def _lattice_fold_svg(style: Style, w: int, h: int, phase: float, rng: random.Random) -> str:
+    elems: list[str] = []
+
+    # Faceted vertical curtains.
+    columns = 42
+    for col in range(columns):
+        xn = col / (columns - 1)
+        x = xn * w
+        env = 0.35 + 0.65 * (1 - abs(xn - 0.5) * 1.8)
+        for seg in range(22):
+            y1 = h * (seg / 22)
+            y2 = h * ((seg + 1) / 22)
+            bend = 38 * env * math.sin(seg * 0.42 + xn * 9 + phase * 2)
+            x2 = x + bend
+            c = style.palette[(seg + col) % len(style.palette)]
+            op = 0.03 + 0.02 * seg
+            elems.append(f'<line x1="{x:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" stroke="{c}" stroke-width="0.9" opacity="{op:.3f}"/>')
+
+    # Crossing sine folds.
+    for layer in range(14):
+        pts = _wave(w, h, phase + layer * 0.27, amp=0.062 + layer * 0.003, f1=0.7 + layer * 0.05, f2=1.2)
+        d = _path(pts)
+        yoff = (layer - 7) * 7.5
+        c = style.palette[layer % len(style.palette)]
+        elems.append(f'<path d="{d}" transform="translate(0,{yoff:.2f})" stroke="{c}" stroke-width="11" opacity="0.07" fill="none"/>')
+        elems.append(f'<path d="{d}" transform="translate(0,{yoff:.2f})" stroke="{c}" stroke-width="1.6" opacity="0.55" fill="none"/>')
+
+    for _ in range(180):
+        x = rng.uniform(0, w)
+        y = rng.uniform(0, h)
+        c = style.palette[rng.randrange(0, len(style.palette))]
+        elems.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="1.0" fill="{c}" opacity="0.14"/>')
+
+    return "".join(elems)
+
+
+def _preview_content(style: Style, w: int, h: int, phase: float, rng: random.Random) -> str:
+    if style.mode == "mesh_ribbon":
+        return _mesh_ribbon_svg(style, w, h, phase, rng)
+    if style.mode == "radial_prism":
+        return _radial_prism_svg(style, w, h, phase, rng)
+    return _lattice_fold_svg(style, w, h, phase, rng)
+
+
+def write_preview(style: Style, w: int, h: int, phase: float, out_file: Path, seed: int) -> None:
     rng = random.Random(seed)
-    if style.mode == "mist":
-        content = _mist_svg(style, width, height, phase, rng)
-    elif style.mode == "pulse":
-        content = _pulse_svg(style, width, height, phase, rng)
-    else:
-        content = _wire_svg(style, width, height, phase, rng)
-
+    content = _preview_content(style, w, h, phase, rng)
     svg = dedent(
         f"""\
-        <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">
           <defs>
             <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="{style.bg_top}"/>
               <stop offset="100%" stop-color="{style.bg_bottom}"/>
             </linearGradient>
-            <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="8" result="blur"/>
-              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="8" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
           <rect width="100%" height="100%" fill="url(#bg)"/>
-          <g filter="url(#softGlow)">{content}</g>
-          <text x="34" y="58" fill="#d7f1ff" opacity="0.78" font-size="27" font-family="Arial, sans-serif">{style.title}</text>
+          <g filter="url(#glow)">{content}</g>
+          <text x="36" y="58" fill="#E7F8FF" opacity="0.82" font-size="28" font-family="Arial, sans-serif">{style.title}</text>
         </svg>
         """
     )
@@ -216,104 +229,81 @@ def write_preview(style: Style, width: int, height: int, phase: float, out_file:
 
 
 def generate_previews(preview_dir: Path, width: int, height: int) -> list[Path]:
-    generated: list[Path] = []
-    for idx, style in enumerate(STYLES.values()):
-        for n, phase in enumerate((0.0, 0.65), start=1):
-            path = preview_dir / f"{style.key}_preview_{n}.svg"
-            write_preview(style, width, height, phase, path, seed=1000 + idx * 100 + n)
-            generated.append(path)
-    return generated
+    files: list[Path] = []
+    for style_index, style in enumerate(STYLES.values()):
+        for num, phase in enumerate((0.0, 0.8), start=1):
+            path = preview_dir / f"{style.key}_preview_{num}.svg"
+            write_preview(style, width, height, phase, path, seed=700 + style_index * 100 + num)
+            files.append(path)
+    return files
 
 
-def ffmpeg_filter(style: Style, width: int, height: int, fps: int) -> str:
-    if style.mode == "mist":
+def ffmpeg_filter(style: Style, w: int, h: int, fps: int) -> str:
+    if style.mode == "mesh_ribbon":
         return ";".join([
-            f"color=c={style.bg_top}:s={width}x{height}:r={fps}[bg]",
-            f"[0:a]showwaves=s={width}x{height}:mode=line:colors={style.colors[1]}:rate={fps},gblur=sigma=10[w0]",
-            f"[0:a]showwaves=s={width}x{height}:mode=cline:colors={style.colors[0]}:rate={fps},gblur=sigma=6[w1]",
-            f"[0:a]showwaves=s={width}x{height}:mode=p2p:colors={style.colors[2]}:rate={fps},gblur=sigma=4[w2]",
-            "[bg][w0]overlay=0:0[tmp1]",
-            "[tmp1][w1]overlay=0:0[tmp2]",
-            "[tmp2][w2]overlay=0:0,eq=brightness=-0.02:saturation=1.25,format=yuv420p[v]",
+            f"color=c={style.bg_top}:s={w}x{h}:r={fps}[bg]",
+            f"[0:a]showwaves=s={w}x{h}:mode=cline:colors={style.palette[0]}:rate={fps},gblur=sigma=7[w0]",
+            f"[0:a]showwaves=s={w}x{h}:mode=line:colors={style.palette[1]}:rate={fps},gblur=sigma=3[w1]",
+            f"[0:a]showwaves=s={w}x{h}:mode=p2p:colors={style.palette[2]}:rate={fps},gblur=sigma=5[w2]",
+            "[bg][w0]overlay=0:0[t1]",
+            "[t1][w1]overlay=0:0[t2]",
+            "[t2][w2]overlay=0:0,eq=saturation=1.35:contrast=1.08,format=yuv420p[v]",
         ])
-
-    if style.mode == "pulse":
+    if style.mode == "radial_prism":
         return ";".join([
-            f"color=c={style.bg_bottom}:s={width}x{height}:r={fps}[bg]",
-            f"[0:a]showwaves=s={width}x{height}:mode=cline:colors={style.colors[0]}:rate={fps},gblur=sigma=7[w0]",
-            f"[0:a]showwaves=s={width}x{height}:mode=point:colors={style.colors[2]}:rate={fps},gblur=sigma=3[w1]",
-            "[bg][w0]overlay=0:0[tmp1]",
-            "[tmp1][w1]overlay=0:0,curves=all='0/0 0.5/0.62 1/1',eq=saturation=1.5:contrast=1.08,format=yuv420p[v]",
+            f"color=c={style.bg_bottom}:s={w}x{h}:r={fps}[bg]",
+            f"[0:a]showwaves=s={w}x{h}:mode=point:colors={style.palette[2]}:rate={fps},gblur=sigma=2[p]",
+            f"[0:a]showwaves=s={w}x{h}:mode=cline:colors={style.palette[0]}:rate={fps},gblur=sigma=8[c]",
+            "[bg][p]overlay=0:0[t1]",
+            "[t1][c]overlay=0:0,curves=all='0/0 0.4/0.5 1/1',eq=saturation=1.55:gamma=1.05,format=yuv420p[v]",
         ])
-
     return ";".join([
-        f"color=c={style.bg_top}:s={width}x{height}:r={fps}[bg]",
-        f"[0:a]showwaves=s={width}x{height}:mode=cline:colors={style.colors[0]}:rate={fps}[w0]",
-        f"[0:a]showwaves=s={width}x{height}:mode=line:colors={style.colors[1]}:rate={fps}[w1]",
-        "[w0]gblur=sigma=5[w0b]",
-        "[w1]gblur=sigma=2[w1b]",
-        "[bg][w0b]overlay=0:0[tmp1]",
-        "[tmp1][w1b]overlay=0:0,unsharp=5:5:1.0:5:5:0.0,eq=saturation=1.35,format=yuv420p[v]",
+        f"color=c={style.bg_top}:s={w}x{h}:r={fps}[bg]",
+        f"[0:a]showwaves=s={w}x{h}:mode=cline:colors={style.palette[1]}:rate={fps}[a]",
+        f"[0:a]showwaves=s={w}x{h}:mode=line:colors={style.palette[0]}:rate={fps}[b]",
+        "[a]gblur=sigma=4[ab]",
+        "[b]gblur=sigma=6[bb]",
+        "[bg][ab]overlay=0:0[t1]",
+        "[t1][bb]overlay=0:0,unsharp=7:7:0.9:7:7:0.0,eq=saturation=1.3,format=yuv420p[v]",
     ])
 
 
 def render_video(style_key: str, audio: Path, output: Path, width: int, height: int, fps: int) -> None:
     if not shutil.which("ffmpeg"):
         raise SystemExit("ffmpeg is required but not found in PATH.")
-    output.parent.mkdir(parents=True, exist_ok=True)
     style = STYLES[style_key]
+    output.parent.mkdir(parents=True, exist_ok=True)
     cmd = [
-        "ffmpeg",
-        "-y",
-        "-i",
-        str(audio),
-        "-filter_complex",
-        ffmpeg_filter(style, width, height, fps),
-        "-map",
-        "[v]",
-        "-map",
-        "0:a",
-        "-c:v",
-        "libx264",
-        "-preset",
-        "slow",
-        "-crf",
-        "16",
-        "-c:a",
-        "aac",
-        "-b:a",
-        "320k",
-        "-shortest",
-        str(output),
+        "ffmpeg", "-y", "-i", str(audio), "-filter_complex", ffmpeg_filter(style, width, height, fps),
+        "-map", "[v]", "-map", "0:a", "-c:v", "libx264", "-preset", "slow", "-crf", "16",
+        "-c:a", "aac", "-b:a", "320k", "-shortest", str(output),
     ]
     subprocess.run(cmd, check=True)
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Reference-inspired FFmpeg wave visualizer")
-    parser.add_argument("--style", choices=STYLES.keys(), default="aurora_mist")
-    parser.add_argument("--audio", type=Path, help="Input audio file")
-    parser.add_argument("--output", type=Path, default=Path("output/visualizer.mp4"))
-    parser.add_argument("--width", type=int, default=1920)
-    parser.add_argument("--height", type=int, default=1080)
-    parser.add_argument("--fps", type=int, default=30)
-    parser.add_argument("--render-previews", action="store_true")
-    parser.add_argument("--preview-dir", type=Path, default=Path("previews"))
-    return parser.parse_args()
+    p = argparse.ArgumentParser(description="Premium FFmpeg visualizer with 3 distinct styles")
+    p.add_argument("--style", choices=STYLES.keys(), default="wire_ribbon")
+    p.add_argument("--audio", type=Path, help="Input audio path")
+    p.add_argument("--output", type=Path, default=Path("output/visualizer.mp4"))
+    p.add_argument("--width", type=int, default=1920)
+    p.add_argument("--height", type=int, default=1080)
+    p.add_argument("--fps", type=int, default=30)
+    p.add_argument("--render-previews", action="store_true")
+    p.add_argument("--preview-dir", type=Path, default=Path("previews"))
+    return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     if args.render_previews:
-        created = generate_previews(args.preview_dir, args.width, args.height)
+        files = generate_previews(args.preview_dir, args.width, args.height)
         print("Generated previews:")
-        for p in created:
-            print(f"- {p}")
+        for file in files:
+            print(f"- {file}")
         return
-
     if args.audio is None:
         raise SystemExit("--audio is required unless --render-previews is used.")
-
     render_video(args.style, args.audio, args.output, args.width, args.height, args.fps)
     print(f"Video rendered: {args.output}")
 
