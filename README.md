@@ -2,36 +2,26 @@
 
 ## Cinematic Wire-Wave Visualizer
 
-This version heavily upgrades the visual language to match premium flowing sound-wave artwork (translucent ribbons + spark particles + glowing layers), with 3 distinct variants:
+This version focuses on premium-looking wire-wave visuals similar to high-end sound-wave artwork.
 
-1. **Wire Flux Aurora** (`wire_flux`)  
-   Bright arcing ribbon canopy with strong central woven mesh and spark trails.
-2. **Wire Helix Photon** (`wire_helix`)  
-   More twisted and energetic ribbon flow with tighter wave crossing behavior.
-3. **Wire Silk Dream** (`wire_silk`)  
-   Softer satin-like layered ribbons with elegant bright highlights.
+## wire_flux preview variants (small-scale friendly)
 
-## Requirements
+Per latest request, I created 3 enhanced alternatives focused on `wire_flux`, tuned for readability and appeal even at small sizes (~120-180 px):
 
-- Python 3.9+
-- FFmpeg in `PATH` for MP4 rendering
+- `previews/wire_flux_preview_1_variant_a.svg`
+- `previews/wire_flux_preview_1_variant_b.svg`
+- `previews/wire_flux_preview_1_variant_c.svg`
 
-## Generate preview images for review
+These use stronger contrast, bolder silhouette ribbons, and controlled glow/spark accents for better downscaled clarity.
+
+## Generate previews
 
 ```bash
 python wave_visualizer.py --render-previews --width 1280 --height 720 --preview-dir previews
 ```
 
-This outputs 3 SVG previews (1 per variant):
-
-- `previews/wire_flux_preview_1.svg`
-- `previews/wire_helix_preview_1.svg`
-- `previews/wire_silk_preview_1.svg`
-
-## Render a video
+## Render video
 
 ```bash
 python wave_visualizer.py --style wire_flux --audio your_song.mp3 --output output/wire_flux.mp4 --width 1920 --height 1080 --fps 30
 ```
-
-Switch with `--style wire_helix` or `--style wire_silk`.
