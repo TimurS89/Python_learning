@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A2C67"/>
+      <stop offset="100%" stop-color="#030816"/>
+    </linearGradient>
+    <radialGradient id="wash" cx="55%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#D6F4FF" stop-opacity="0.82"/>
+      <stop offset="50%" stop-color="#8FBFFF" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <rect width="100%" height="100%" fill="url(#wash)" opacity="0.75"/>
+
+  <g filter="url(#glow)">
+    <path d="M-20,120 C280,30 420,260 640,150 C900,20 1040,230 1300,120" stroke="#E9F8FF" stroke-width="20" opacity="0.16" fill="none"/>
+    <path d="M-20,150 C280,55 420,295 640,178 C900,45 1040,260 1300,150" stroke="#C8E2FF" stroke-width="11" opacity="0.24" fill="none"/>
+
+    <path d="M-20,240 C260,430 420,235 640,340 C930,500 1035,235 1300,330" stroke="#EEF7FF" stroke-width="14" opacity="0.20" fill="none"/>
+    <path d="M-20,270 C260,460 420,265 640,370 C930,530 1035,265 1300,360" stroke="#BFDFFF" stroke-width="7" opacity="0.31" fill="none"/>
+
+    <path d="M-20,340 C250,300 430,485 640,360 C900,205 1030,475 1300,340" stroke="#95B6FF" stroke-width="5.8" opacity="0.80" fill="none"/>
+    <path d="M-20,368 C250,327 430,512 640,388 C900,232 1030,502 1300,368" stroke="#C0C6FF" stroke-width="3.3" opacity="0.92" fill="none"/>
+
+    <path d="M-20,505 C230,670 420,500 640,595 C920,710 1035,470 1300,560" stroke="#FF70CC" stroke-width="2.9" opacity="0.94" fill="none"/>
+  </g>
+
+  <g opacity="0.95">
+    <circle cx="220" cy="505" r="4.4" fill="#FFE9FF"/>
+    <circle cx="360" cy="548" r="3.6" fill="#FF98E3"/>
+    <circle cx="525" cy="587" r="4.2" fill="#FF74CE"/>
+    <circle cx="690" cy="562" r="5.0" fill="#FF91E1"/>
+    <circle cx="860" cy="603" r="4.3" fill="#FF69C6"/>
+    <circle cx="1010" cy="555" r="3.8" fill="#FFB3ED"/>
+    <circle cx="1130" cy="521" r="4.5" fill="#FFD7F6"/>
+  </g>
+</svg>
