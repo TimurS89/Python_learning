@@ -1,27 +1,19 @@
 # Python_learning
 
-## Cinematic Wire-Wave Visualizer
+## wire_silk preview generator
 
-This version focuses on premium-looking wire-wave visuals similar to high-end sound-wave artwork.
+This repository now focuses only on generating one file:
 
-## wire_flux preview variants (small-scale friendly)
+- `previews/wire_silk_preview_1.svg`
 
-Per latest request, I created 3 enhanced alternatives focused on `wire_flux`, tuned for readability and appeal even at small sizes (~120-180 px):
-
-- `previews/wire_flux_preview_1_variant_a.svg`
-- `previews/wire_flux_preview_1_variant_b.svg`
-- `previews/wire_flux_preview_1_variant_c.svg`
-
-These use stronger contrast, bolder silhouette ribbons, and controlled glow/spark accents for better downscaled clarity.
-
-## Generate previews
+### Usage
 
 ```bash
-python wave_visualizer.py --render-previews --width 1280 --height 720 --preview-dir previews
+python wave_visualizer.py
 ```
 
-## Render video
+Optional custom output/size:
 
 ```bash
-python wave_visualizer.py --style wire_flux --audio your_song.mp3 --output output/wire_flux.mp4 --width 1920 --height 1080 --fps 30
+python wave_visualizer.py --width 1280 --height 720 --output previews/wire_silk_preview_1.svg
 ```
